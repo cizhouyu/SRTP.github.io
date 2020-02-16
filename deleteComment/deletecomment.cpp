@@ -158,17 +158,27 @@ void remove_Comment(char *buffer, size_t size)
 		}
 	}
 }
-bool deleteComment(string file)
+int main(int argc, char *argv[])
 {
 	int fd, n;
-	char buf[500000];
-	char * filename = const_cast<char *>(file.c_str());
-	fd = open(filename, O_RDONLY); 
+	char buf[1024000];
+
+	if (argc != 2&&argc!= 3)
+	{
+		string path = argv[0];
+		int pos = path.find_last_of('\\');
+		string name(path.substr(pos + 1));
+		name = name.substr(0, name.length() - 4);
+		cout << "用法：" << name << " 需要去除注释的文件 去除注释后将其存放的文件" << endl;
+	}
+	
+	fd = open(argv[1], O_RDONLY); 
 	if (fd == -1)
 	{
 		cout << "文件不存在！";
 		return -1;
 	}
+
 	n = read(fd, buf, sizeof(buf));
 	if (n == -1 || n == 0)
 	{
@@ -183,18 +193,20 @@ bool deleteComment(string file)
 	replace_String(str, "\n\n", "\n");
 	replace_String(str, "  ", " ");
 	replace_String(str, " \n", "");
-	replace_String(str, " \r\n", "");//去除多余空格、空行
-	ofstream fs(filename);
-	fs << str;
+	replace_String(str, " \r\n", "");
+	//printf("%s", buf);
+	if (argc == 3)
+	{
+		ofstream fs(argv[2]);
+		fs << str;
+	}
+	else
+	{
+		string postfix = "_re.java";
+		string fns = argv[1] + postfix;
+		ofstream fs(fns);
+		fs << str;
+	}
 	close(fd);
-	return true;
-}
-int main()
-{
-	string r;
-	cout << "请输入完整路径";
-	cin >> r;
-	deleteComment(r);
-	cout << "succeeded";
-	system("pause");
+	return 0;
 }
