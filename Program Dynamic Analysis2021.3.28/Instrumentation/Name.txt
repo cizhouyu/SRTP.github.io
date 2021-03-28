@@ -1,0 +1,7 @@
+共有6个函数：
+1 bool word_segment_
+2 float compare
+3 string readFileIntoString
+4 string readFileThroughPath
+5 int main
+6 int main
